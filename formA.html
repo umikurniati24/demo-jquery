@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <link rel="stylesheet" href="bootstrap-5.3.0-alpha3-dist/bootstrap-5.3.0-alpha3-dist/css/bootstrap.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Pangolin&display=swap" rel="stylesheet" />
+    <h1>Form Pemweb Umik-Lathifa</h1>
+    <style>
+      /* style.css */
+
+      /* Gaya body */
+      body {
+        background-color: #f5e6e8;
+        font-family: "Pangolin", cursive;
+        color: #333;
+      }
+
+      /* Gaya judul */
+      h1 {
+        text-align: center;
+        color: #d50063;
+        margin-top: 20px;
+      }
+
+      /* Gaya form container */
+      .container {
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Gaya tabel hasil */
+      #resultTable {
+        margin-top: 20px;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      /* Gaya baris tabel */
+      #myTable tr {
+        background-color: #fce4ec;
+      }
+
+      /* Gaya baris tabel genap */
+      #myTable tr:nth-child(even) {
+        background-color: #f8bbd0;
+      }
+
+      /* Gaya sel tabel */
+      #myTable td {
+        border: 1px solid #f06292;
+        padding: 8px;
+      }
+
+      /* Gaya pesan hasil */
+      #resultTable p {
+        color: #888;
+        font-style: italic;
+      }
+
+      /* Gaya tombol */
+      .btn {
+        background-color: #f06292;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #ec407a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <form id="myForm">
+        <div class="mb-3">
+          <label for="numberInput" class="form-label">Angka:</label>
+          <input type="number" class="form-control" id="numberInput" required />
+        </div>
+        <div class="mb-3">
+          <label for="textInput" class="form-label">Teks:</label>
+          <input type="text" class="form-control" id="textInput" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <br />
+        <br />
+      </form>
+      <div id="resultTable" style="display: none">
+        <h3>Hasil:</h3>
+        <table id="myTable" class="table table-striped"></table>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $("#myForm").submit(function (e) {
+          e.preventDefault(); // Menghentikan submit form
+
+          var number = $("#numberInput").val();
+          var text = $("#textInput").val();
+
+          // Mengirim data ke kode program PHP menggunakan AJAX
+          $.ajax({
+            url: "process.php",
+            type: "POST",
+            data: {
+              number: number,
+              text: text,
+            },
+            dataType: "json",
+            // ...
+            success: function (response) {
+              // Mengisi tabel dengan data array
+              for (var i = 0; i < response.length; i++) {
+                var row = "<tr id='row" + i + "'><td>" + (i + 1) + "</td><td>" + response[i] + "</td><td><button onclick='editRow(" + i + ")'>Edit</button></td><td><button onclick='deleteRow(" + i + ")'>Delete</button></td></tr>";
+                $("#myTable").append(row);
+              }
+
+              // Menampilkan tabel dengan animasi
+              $("#resultTable").slideDown(1000);
+              // Menampilkan tabel dengan animasi
+              $("#resultTable").hide().slideDown(1000).fadeIn(1000);
+
+              // Manipulasi DOM tambahan
+              var resultCount = response.length;
+              var resultMessage = "Hasil mengandung " + resultCount + " data.";
+              var messageElement = $("<p>").text(resultMessage);
+
+              // Menambahkan pesan di bawah tabel
+              $("#resultTable").append(messageElement);
+
+              // Menambahkan warna pada baris tabel
+              $("#myTable tr:even").addClass("table-secondary");
+            },
+            // ...
+          });
+        });
+
+        // Function to animate the form
+        function animateForm() {
+          $(".container").fadeIn(1000).fadeOut(1000).fadeIn(1000);
+
+          $(".container")
+            .animate(
+              {
+                opacity: 0.25,
+                marginTop: "50px",
+              },
+              1000
+            )
+            .animate(
+              {
+                opacity: 1,
+                marginTop: "0",
+              },
+              1000
+            );
+        }
+
+        // Call the animation function
+        animateForm();
+      });
+
+      function editRow(rowId) {
+        var newText = prompt("Masukkan inputan baru:");
+        if (newText !== null) {
+          $("#row" + rowId + " td:nth-child(2)").text(newText);
+        }
+      }
+
+      // Function to delete a row
+      function deleteRow(rowId) {
+        if (confirm("apa kamu yakin ingin menghapus baris?")) {
+          $("#row" + rowId).remove();
+          updateResultCount();
+        }
+      }
+
+      // Function to update the result count
+      function updateResultCount() {
+        var resultCount = $("#myTable tr").length; // Exclude the table header
+        var resultMessage = "Hasil mengandung " + resultCount + " data.";
+        $("#resultTable p").text(resultMessage);
+      }
+    </script>
+  </body>
+</html>
