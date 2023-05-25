@@ -147,7 +147,7 @@
           });
         });
 
-        // Function to animate the form
+        // Fungsi untuk animasi pada form
         function animateForm() {
           $(".container").fadeIn(1000).fadeOut(1000).fadeIn(1000);
 
@@ -168,7 +168,7 @@
             );
         }
 
-        // Call the animation function
+        // memanggil fungsi animasi
         animateForm();
       });
 
@@ -179,7 +179,7 @@
         }
       }
 
-      // Function to delete a row
+      // Fungsi untuk menghapus baris
       function deleteRow(rowId) {
         if (confirm("apa kamu yakin ingin menghapus baris?")) {
           $("#row" + rowId).remove();
@@ -187,7 +187,7 @@
         }
       }
 
-      // Function to update the result count
+      // Fungsi untuk memperbarui hasil dari perhitungan
       function updateResultCount() {
         var resultCount = $("#myTable tr").length; // Exclude the table header
         var resultMessage = "Hasil mengandung " + resultCount + " data.";
